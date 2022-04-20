@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -48,55 +51,69 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            TextField(
-                decoration: InputDecoration(labelText: 'Title'),
-                controller: titleController,
+    return SingleChildScrollView(
+      child: Card(
+        child: Container(
+          padding: EdgeInsets.only(
+              left: 10,
+              top: 10,
+              right: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              TextField(
+                  decoration: InputDecoration(labelText: 'Title'),
+                  controller: titleController,
+                  onSubmitted: (_) {
+                    submitData();
+                  }),
+              TextField(
+                decoration: InputDecoration(labelText: 'Amount'),
+                controller: amountController,
+                keyboardType: TextInputType.number,
                 onSubmitted: (_) {
                   submitData();
-                }),
-            TextField(
-              decoration: InputDecoration(labelText: 'Amount'),
-              controller: amountController,
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) {
-                submitData();
-              },
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // ignore: unnecessary_null_comparison
-                Text(_selectedDate == null
-                    ? 'No Date Chosen!'
-                    : 'Picked Date: ${DateFormat().add_yMd().format(_selectedDate!)}'),
-                FlatButton(
-                  onPressed: _presentDayPicker,
-                  child: Text(
-                    'Choose Date',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  textColor: Theme.of(context).primaryColor,
-                ),
-              ],
-            ),
-            RaisedButton(
-              color: Theme.of(context).primaryColor,
-              child: Text(
-                'Add Transaction',
-                style: TextStyle(color: Colors.white),
+                },
               ),
-              onPressed: submitData,
-            ),
-          ],
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // ignore: unnecessary_null_comparison
+                  Text(_selectedDate == null
+                      ? 'No Date Chosen!'
+                      : 'Picked Date: ${DateFormat().add_yMd().format(_selectedDate!)}'),
+                  Platform.isIOS
+                      ? CupertinoButton(
+                          onPressed: _presentDayPicker,
+                          child: Text(
+                            'Choose Date',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        )
+                      : FlatButton(
+                          onPressed: _presentDayPicker,
+                          child: Text(
+                            'Choose Date',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          textColor: Theme.of(context).primaryColor,
+                        ),
+                ],
+              ),
+              RaisedButton(
+                color: Theme.of(context).primaryColor,
+                child: Text(
+                  'Add Transaction',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: submitData,
+              ),
+            ],
+          ),
         ),
       ),
     );
