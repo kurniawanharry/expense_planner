@@ -1,3 +1,4 @@
+import 'package:expense_planner/widgets/transaction_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:expense_planner/models/transaction.dart';
@@ -33,47 +34,25 @@ class TransactionList extends StatelessWidget {
               ],
             );
           })
-        : ListView.builder(
-            itemCount: transactions.length,
-            itemBuilder: (ctx, index) {
-              return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                  elevation: 4,
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      child: Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: FittedBox(
-                            child: Text('\$${transactions[index].amount}')),
-                      ),
-                    ),
-                    title: Text(
-                      transactions[index].title,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    subtitle: Text(
-                      DateFormat.yMMMd().format(transactions[index].date),
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    trailing: medQuery.size.width > 460
-                        ? FlatButton.icon(
-                            onPressed: () {
-                              deleteTx(transactions[index].id);
-                            },
-                            icon: Icon(Icons.delete),
-                            textColor: Theme.of(context).errorColor,
-                            label: Text('Delete'),
-                          )
-                        : IconButton(
-                            icon: Icon(Icons.delete),
-                            color: Theme.of(context).errorColor,
-                            onPressed: () {
-                              deleteTx(transactions[index].id);
-                            },
-                          ),
-                  ));
-            },
-          );
+        : ListView(
+            children: transactions
+                .map(
+                  (tx) => TransactionItem(
+                      key: ValueKey(tx.id),
+                      transaction: tx,
+                      medQuery: medQuery,
+                      deleteTx: deleteTx),
+                )
+                .toList());
   }
 }
+
+// ListView.builder(
+//             itemCount: transactions.length,
+//             itemBuilder: (ctx, index) {
+//               return TransactionItem(
+//                   transaction: transactions[index],
+//                   medQuery: medQuery,
+//                   deleteTx: deleteTx);
+//             },
+//           );

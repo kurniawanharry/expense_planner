@@ -121,71 +121,74 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.add))
       ],
     );
+    final txWidget = Container(
+      height: (MediaQuery.of(context).size.height -
+              appBar2.preferredSize.height -
+              MediaQuery.of(context).padding.top) *
+          0.75,
+      child: TransactionList(
+        transactions: _userTransactions,
+        deleteTx: _deleteTransaction,
+      ),
+    );
+
+    List<Widget> newMethod2(
+        BuildContext context, AppBar appBar2, Widget txWidget) {
+      return [
+        Container(
+          height: (MediaQuery.of(context).size.height -
+                  appBar2.preferredSize.height -
+                  MediaQuery.of(context).padding.top) *
+              0.25,
+          child: Chart(recentTransactions: _recentTransactions),
+        ),
+        txWidget
+      ];
+    }
+
+    List<Widget> newMethod(
+        BuildContext context, AppBar appBar2, Widget txWidget) {
+      return [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _showChart
+                ? Text(
+                    'Show to Transaction',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  )
+                : Text(
+                    'Show to Chart',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+            Switch.adaptive(
+                value: _showChart,
+                onChanged: (val) {
+                  setState(() {
+                    _showChart = val;
+                  });
+                })
+          ],
+        ),
+        _showChart
+            ? Container(
+                height: (MediaQuery.of(context).size.height -
+                        appBar2.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.7,
+                child: Chart(recentTransactions: _recentTransactions))
+            : txWidget
+      ];
+    }
+
     final body2 = SafeArea(
       child: SingleChildScrollView(
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (isLandscape)
-                  _showChart
-                      ? Text(
-                          'Show to Transaction',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        )
-                      : Text(
-                          'Show to Chart',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                if (isLandscape)
-                  Switch.adaptive(
-                      value: _showChart,
-                      onChanged: (val) {
-                        setState(() {
-                          _showChart = val;
-                        });
-                      })
-              ],
-            ),
-            if (!isLandscape)
-              Container(
-                  height: (MediaQuery.of(context).size.height -
-                          appBar2.preferredSize.height -
-                          MediaQuery.of(context).padding.top) *
-                      0.25,
-                  child: Chart(recentTransactions: _recentTransactions)),
-            if (!isLandscape)
-              Container(
-                height: (MediaQuery.of(context).size.height -
-                        appBar2.preferredSize.height -
-                        MediaQuery.of(context).padding.top) *
-                    0.75,
-                child: TransactionList(
-                  transactions: _userTransactions,
-                  deleteTx: _deleteTransaction,
-                ),
-              ),
-            if (isLandscape)
-              _showChart
-                  ? Container(
-                      height: (MediaQuery.of(context).size.height -
-                              appBar2.preferredSize.height -
-                              MediaQuery.of(context).padding.top) *
-                          0.7,
-                      child: Chart(recentTransactions: _recentTransactions))
-                  : Container(
-                      height: (MediaQuery.of(context).size.height -
-                              appBar2.preferredSize.height -
-                              MediaQuery.of(context).padding.top) *
-                          2,
-                      child: TransactionList(
-                        transactions: _userTransactions,
-                        deleteTx: _deleteTransaction,
-                      ),
-                    )
+            if (isLandscape) ...newMethod(context, appBar2, txWidget),
+            if (!isLandscape) ...newMethod2(context, appBar2, txWidget),
           ],
         ),
       ),
